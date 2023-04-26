@@ -2,7 +2,7 @@
 * @Author: fyfishie
 * @Date: 2023-03-15:08
  * @LastEditors: fyfishie
- * @LastEditTime: 2023-04-03:09
+ * @LastEditTime: 2023-04-26:14
 * @Description: :)
 * @email: muren.zhuang@outlook.com
 */
@@ -10,6 +10,7 @@ package ipop
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/fyfishie/ipop/lib"
@@ -85,4 +86,15 @@ func NetLength(ipList []string) (subnetLength int) {
 // 1.2.3.4/30 ?
 func IsCIDR(s string) bool {
 	return CIDRReg.MatchString(s)
+}
+
+func CIDRRange(cidr string) (start, end int) {
+	ss := strings.Split(cidr, "/")
+	net := ss[0]
+	sub := ss[1]
+	intnet := String2Int(net)
+	intsub, _ := strconv.Atoi(sub)
+	start = intnet & (0xffffffff << (32 - intsub))
+	end = start + (1 << (32 - intsub)) - 1
+	return start, end
 }
